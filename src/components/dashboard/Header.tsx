@@ -1,4 +1,5 @@
 import { Shield, Activity } from 'lucide-react';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 export function Header() {
   return (
@@ -17,10 +18,13 @@ export function Header() {
               <p className="text-sm text-muted-foreground">Intelligent Drowsiness Detection System</p>
             </div>
           </div>
-          
-          <div className="flex items-center gap-3 px-4 py-2 rounded-lg bg-secondary border border-border">
-            <Activity className="w-4 h-4 text-success animate-pulse" />
-            <span className="text-sm font-medium">System Active</span>
+
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <div className="flex items-center gap-3 px-4 py-2 rounded-lg bg-secondary border border-border">
+              <Activity className="w-4 h-4 text-success animate-pulse" />
+              <span className="text-sm font-medium">System Active</span>
+            </div>
           </div>
         </div>
       </div>

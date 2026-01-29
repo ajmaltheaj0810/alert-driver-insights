@@ -5,13 +5,17 @@ import { LiveMonitor } from '@/components/dashboard/LiveMonitor';
 import { EventsTable } from '@/components/dashboard/EventsTable';
 import { DriversTable } from '@/components/dashboard/DriversTable';
 import { DurationChart } from '@/components/dashboard/DurationChart';
+import { SeverityDistributionChart } from '@/components/dashboard/SeverityDistributionChart';
+import { EventsTimelineChart } from '@/components/dashboard/EventsTimelineChart';
+import { DriverPerformanceRadar } from '@/components/dashboard/DriverPerformanceRadar';
+import { HourlyActivityHeatmap } from '@/components/dashboard/HourlyActivityHeatmap';
 import { mockEvents, getDriversWithStatus } from '@/data/mockData';
 import { Users, AlertTriangle, Clock, Activity } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const Index = () => {
   const driversWithStatus = useMemo(() => getDriversWithStatus(), []);
-  
+
   const metrics = useMemo(() => {
     const totalEvents = mockEvents.length;
     const highSeverityEvents = mockEvents.filter(e => e.severity === 'high').length;
@@ -25,7 +29,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      
+
       <main className="container mx-auto px-6 py-8">
         {/* Metrics Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -69,6 +73,24 @@ const Index = () => {
           </div>
         </div>
 
+        {/* Charts Section - Responsive Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <div className="lg:col-span-2">
+            <EventsTimelineChart events={mockEvents} />
+          </div>
+          <div>
+            <SeverityDistributionChart events={mockEvents} />
+          </div>
+          <div>
+            <HourlyActivityHeatmap events={mockEvents} />
+          </div>
+        </div>
+
+        {/* Driver Performance Section */}
+        <div className="mb-8">
+          <DriverPerformanceRadar drivers={driversWithStatus} />
+        </div>
+
         {/* Tabbed Tables */}
         <Tabs defaultValue="events" className="space-y-4">
           <TabsList className="bg-secondary border border-border">
@@ -79,11 +101,11 @@ const Index = () => {
               Driver Registry
             </TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="events" className="animate-fade-in">
             <EventsTable events={mockEvents} />
           </TabsContent>
-          
+
           <TabsContent value="drivers" className="animate-fade-in">
             <DriversTable drivers={driversWithStatus} />
           </TabsContent>

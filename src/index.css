@@ -1,8 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 @layer base {
   :root {
@@ -64,6 +64,65 @@
     --glow-success: 0 0 20px hsl(160 84% 39% / 0.4);
     --glow-warning: 0 0 20px hsl(38 92% 50% / 0.4);
     --glow-danger: 0 0 20px hsl(0 72% 51% / 0.4);
+  }
+
+  .light {
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    --primary: 160 84% 39%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
+
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 210 40% 96%;
+    --accent-foreground: 222 47% 11%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    --success: 160 84% 39%;
+    --success-foreground: 0 0% 100%;
+
+    --danger: 0 72% 51%;
+    --danger-foreground: 0 0% 100%;
+
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 160 84% 39%;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 222 47% 11%;
+    --sidebar-primary: 160 84% 39%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 40% 96%;
+    --sidebar-accent-foreground: 222 47% 11%;
+    --sidebar-border: 214 32% 91%;
+    --sidebar-ring: 160 84% 39%;
+
+    /* Custom gradients for light mode */
+    --gradient-primary: linear-gradient(135deg, hsl(160 84% 39%) 0%, hsl(160 84% 30%) 100%);
+    --gradient-warning: linear-gradient(135deg, hsl(38 92% 50%) 0%, hsl(25 95% 45%) 100%);
+    --gradient-danger: linear-gradient(135deg, hsl(0 72% 51%) 0%, hsl(0 72% 40%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(210 40% 98%) 100%);
+
+    /* Glow effects for light mode */
+    --glow-success: 0 0 20px hsl(160 84% 39% / 0.2);
+    --glow-warning: 0 0 20px hsl(38 92% 50% / 0.2);
+    --glow-danger: 0 0 20px hsl(0 72% 51% / 0.2);
   }
 }
 
@@ -163,11 +222,10 @@
 
   .timeline-bar {
     @apply h-2 rounded-full;
-    background: linear-gradient(90deg, 
-      hsl(var(--success)) 0%, 
-      hsl(var(--warning)) 50%, 
-      hsl(var(--danger)) 100%
-    );
+    background: linear-gradient(90deg,
+        hsl(var(--success)) 0%,
+        hsl(var(--warning)) 50%,
+        hsl(var(--danger)) 100%);
   }
 }
 
@@ -189,6 +247,7 @@
     from {
       box-shadow: 0 0 10px hsl(var(--primary) / 0.3);
     }
+
     to {
       box-shadow: 0 0 20px hsl(var(--primary) / 0.6);
     }
