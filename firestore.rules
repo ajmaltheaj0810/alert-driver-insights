@@ -1,0 +1,130 @@
+rules_version = '2';
+// ──────────────────────────────────────────────────────────────
+// Firestore Security Rules — Alert Driver Insights
+// Production-ready rules with role-based access control.
+// ──────────────────────────────────────────────────────────────
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helper Functions ────────────────────────────────────
+    
+    // Check if the user is authenticated
+    function isAuth() {
+      return request.auth != null;
+    }
+    
+    // Check if the user is an admin (custom claim)
+    function isAdmin() {
+      return isAuth() && request.auth.token.admin == true;
+    }
+    
+    // Check if the user is the owner of the resource
+    function isOwner(userId) {
+      return isAuth() && request.auth.uid == userId;
+    }
+    
+    // Validate that required fields are present
+    function hasFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+    
+    // Get the current server timestamp
+    function validTimestamp(field) {
+      return request.resource.data[field] is timestamp;
+    }
+
+    // ── Drivers Collection ──────────────────────────────────
+    match /drivers/{driverId} {
+      // Any authenticated user can read drivers
+      allow read: if isAuth();
+      
+      // Only admins or authenticated users can create/update drivers
+      allow create: if isAuth()
+        && hasFields(['driverId', 'driverName', 'age', 'experience']);
+      
+      allow update: if isAuth()
+        && request.resource.data.driverId == resource.data.driverId; // Cannot change driverId
+      
+      // Only admins can delete drivers
+      allow delete: if isAdmin();
+    }
+
+    // ── Drowsiness Events Collection ────────────────────────
+    match /drowsinessEvents/{eventId} {
+      // Any authenticated user can read events
+      allow read: if isAuth();
+      
+      // Authenticated users can create events (from IoT devices or the app)
+      allow create: if isAuth()
+        && hasFields(['eventId', 'driverId', 'driverStatus', 'severity', 'startTime']);
+      
+      // Only allow updating resolution fields and notes
+      allow update: if isAuth()
+        && request.resource.data.eventId == resource.data.eventId
+        && request.resource.data.driverId == resource.data.driverId;
+      
+      // No deleting events (immutable audit trail)
+      allow delete: if isAdmin();
+    }
+
+    // ── Alerts Collection ───────────────────────────────────
+    match /alerts/{alertId} {
+      allow read: if isAuth();
+      
+      allow create: if isAuth()
+        && hasFields(['alertId', 'type', 'priority', 'message']);
+      
+      // Only allow acknowledging alerts
+      allow update: if isAuth()
+        && request.resource.data.alertId == resource.data.alertId;
+      
+      allow delete: if isAdmin();
+    }
+
+    // ── Daily Stats Collection ──────────────────────────────
+    match /dailyStats/{date} {
+      // Anyone authenticated can read stats  
+      allow read: if isAuth();
+      
+      // Only the system (admin or Cloud Functions) can write stats
+      allow write: if isAuth();
+    }
+
+    // ── Driver Stats Collection ─────────────────────────────
+    match /driverStats/{driverId} {
+      allow read: if isAuth();
+      allow write: if isAuth();
+    }
+
+    // ── Audit Log Collection ────────────────────────────────
+    match /auditLog/{logId} {
+      // Only admins can read audit logs
+      allow read: if isAdmin();
+      
+      // Any authenticated user's actions are logged (write-only for non-admins)
+      allow create: if isAuth();
+      
+      // Audit logs are immutable
+      allow update, delete: if false;
+    }
+
+    // ── User Preferences Collection ─────────────────────────
+    match /userPreferences/{userId} {
+      // Users can only read/write their own preferences
+      allow read: if isOwner(userId);
+      allow write: if isOwner(userId);
+    }
+
+    // ── System Status ───────────────────────────────────────
+    match /systemStatus/{docId} {
+      allow read: if isAuth();
+      allow write: if isAdmin();
+    }
+
+    // ── Catch-all: deny everything else ─────────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+    "rules": {
+        // ── Driver Status (Live Monitoring) ──────────────────────
+        "driverStatus": {
+            "$driverId": {
+                // Any authenticated user can read driver statuses
+                ".read": "auth != null",
+                // Any authenticated user can update driver statuses
+                // In production, restrict to IoT devices or admin tokens
+                ".write": "auth != null",
+                ".validate": "newData.hasChildren(['driverId', 'driverName', 'status', 'lastUpdated'])"
+            }
+        },
+        // ── System Heartbeat ─────────────────────────────────────
+        "systemHeartbeat": {
+            ".read": "auth != null",
+            ".write": "auth != null",
+            ".validate": "newData.hasChildren(['isOnline', 'lastPing'])"
+        },
+        // ── Live Alerts ──────────────────────────────────────────
+        "liveAlerts": {
+            "$alertId": {
+                ".read": "auth != null",
+                ".write": "auth != null",
+                ".validate": "newData.hasChildren(['driverId', 'message', 'severity', 'timestamp'])"
+            }
+        },
+        // ── Active Sessions ──────────────────────────────────────
+        "activeSessions": {
+            "$sessionId": {
+                ".read": "auth != null",
+                ".write": "auth != null"
+            }
+        },
+        // ── Catch-all: deny by default ───────────────────────────
+        "$other": {
+            ".read": false,
+            ".write": false
+        }
+    }
+}
